@@ -1,0 +1,179 @@
+{
+  "entities": {
+    "WardInfo": {
+      "title": "WardInfo",
+      "description": "Metadata and Ward Member contact details for Ward 19 Melparamba",
+      "type": "object",
+      "properties": {
+        "wardNumber": { "type": "number", "description": "Ward number (19)" },
+        "wardName": { "type": "string", "maxLength": 150, "description": "Ward name in English" },
+        "wardNameMl": { "type": "string", "maxLength": 200, "description": "Ward name in Malayalam" },
+        "panchayat": { "type": "string", "maxLength": 150, "description": "Panchayat name in English" },
+        "panchayatMl": { "type": "string", "maxLength": 200, "description": "Panchayat name in Malayalam" },
+        "memberName": { "type": "string", "maxLength": 150, "description": "Ward member full name in English" },
+        "memberNameMl": { "type": "string", "maxLength": 200, "description": "Ward member full name in Malayalam" },
+        "memberRole": { "type": "string", "maxLength": 150, "description": "Designation in English" },
+        "memberRoleMl": { "type": "string", "maxLength": 200, "description": "Designation in Malayalam" },
+        "phone": { "type": "string", "maxLength": 20, "pattern": "^[0-9+\\-\\s]{10,16}$", "description": "Phone number" },
+        "whatsapp": { "type": "string", "maxLength": 20, "description": "WhatsApp number" },
+        "officeHours": { "type": "string", "maxLength": 200, "description": "Office hours in English" },
+        "officeHoursMl": { "type": "string", "maxLength": 250, "description": "Office hours in Malayalam" },
+        "officeAddress": { "type": "string", "maxLength": 300, "description": "Office address in English" },
+        "officeAddressMl": { "type": "string", "maxLength": 350, "description": "Office address in Malayalam" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last updated server timestamp" }
+      },
+      "required": ["wardNumber", "wardName", "wardNameMl", "panchayat", "panchayatMl", "memberName", "memberNameMl", "phone", "officeHours", "officeHoursMl", "updatedAt"]
+    },
+    "Notice": {
+      "title": "Notice",
+      "description": "Public announcement or notice for Ward 19 residents",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 200, "description": "Notice title in English" },
+        "titleMl": { "type": "string", "maxLength": 300, "description": "Notice title in Malayalam" },
+        "date": { "type": "string", "minLength": 1, "maxLength": 40, "description": "Display date string" },
+        "category": { "type": "string", "enum": ["Meeting", "Camp", "Water/Power", "General"], "description": "Notice category" },
+        "description": { "type": "string", "minLength": 1, "maxLength": 2000, "description": "Full description in English" },
+        "descriptionMl": { "type": "string", "maxLength": 3000, "description": "Full description in Malayalam" },
+        "imageUrl": { "type": "string", "maxLength": 500000, "description": "Optional notice image URL or data URI" },
+        "sendPush": { "type": "boolean", "description": "Whether push notification was triggered" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation server timestamp" }
+      },
+      "required": ["title", "titleMl", "date", "category", "description", "descriptionMl", "sendPush", "createdAt"]
+    },
+    "Contact": {
+      "title": "Contact",
+      "description": "Emergency and civic contact number",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 150, "description": "Contact name in English" },
+        "nameMl": { "type": "string", "maxLength": 200, "description": "Contact name in Malayalam" },
+        "role": { "type": "string", "maxLength": 150, "description": "Role or department in English" },
+        "roleMl": { "type": "string", "maxLength": 200, "description": "Role or department in Malayalam" },
+        "phone": { "type": "string", "minLength": 3, "maxLength": 25, "description": "Telephone number" },
+        "category": { "type": "string", "enum": ["Ward Member", "Panchayat", "Hospital", "Police", "Fire", "Electricity", "Water", "Ambulance"], "description": "Contact category" },
+        "officeHours": { "type": "string", "maxLength": 150, "description": "Available hours" },
+        "priority": { "type": "number", "description": "Sort priority" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation server timestamp" }
+      },
+      "required": ["name", "nameMl", "role", "roleMl", "phone", "category", "officeHours", "priority", "createdAt"]
+    },
+    "Complaint": {
+      "title": "Complaint",
+      "description": "Private citizen complaint containing PII, accessible only to the submitting resident UID or Admin",
+      "type": "object",
+      "properties": {
+        "referenceNumber": { "type": "string", "minLength": 5, "maxLength": 40, "pattern": "^W19-[0-9]{4}-[0-9]{4}$", "description": "Unique reference number e.g. W19-2026-0001" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120, "description": "Resident full name (PII)" },
+        "phone": { "type": "string", "minLength": 10, "maxLength": 10, "pattern": "^[0-9]{10}$", "description": "10-digit mobile number (PII)" },
+        "category": { "type": "string", "enum": ["Streetlight", "Road", "Waste", "Drainage", "Water", "Other"], "description": "Problem category" },
+        "place": { "type": "string", "minLength": 1, "maxLength": 150, "description": "Landmark or locality in Ward 19" },
+        "description": { "type": "string", "minLength": 1, "maxLength": 1500, "description": "Detailed problem description" },
+        "photoUrl": { "type": "string", "maxLength": 600000, "description": "Optional photo URL or base64 data URI" },
+        "latitude": { "type": "number", "description": "Optional GPS latitude" },
+        "longitude": { "type": "number", "description": "Optional GPS longitude" },
+        "status": { "type": "string", "enum": ["Received", "In Progress", "Resolved"], "description": "Current resolution status" },
+        "adminRemark": { "type": "string", "maxLength": 1000, "description": "Official remark from Ward Member / Admin" },
+        "authorUid": { "type": "string", "minLength": 1, "maxLength": 128, "description": "Firebase Auth UID (anonymous or signed-in) of reporter" },
+        "date": { "type": "string", "minLength": 1, "maxLength": 40, "description": "Formatted date of submission" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp of creation" }
+      },
+      "required": ["referenceNumber", "name", "phone", "category", "place", "description", "status", "adminRemark", "authorUid", "date", "createdAt"]
+    },
+    "ComplaintPublicStatus": {
+      "title": "ComplaintPublicStatus",
+      "description": "PII-free public status and resolved issue tracker document keyed by referenceNumber",
+      "type": "object",
+      "properties": {
+        "referenceNumber": { "type": "string", "minLength": 5, "maxLength": 40, "pattern": "^W19-[0-9]{4}-[0-9]{4}$", "description": "Reference number e.g. W19-2026-0001" },
+        "category": { "type": "string", "enum": ["Streetlight", "Road", "Waste", "Drainage", "Water", "Other"], "description": "Issue category" },
+        "place": { "type": "string", "minLength": 1, "maxLength": 150, "description": "Locality or landmark only (no personal info)" },
+        "status": { "type": "string", "enum": ["Received", "In Progress", "Resolved"], "description": "Resolution status" },
+        "adminRemark": { "type": "string", "maxLength": 1000, "description": "Admin remark for status tracking" },
+        "date": { "type": "string", "minLength": 1, "maxLength": 40, "description": "Submission or resolution date string" },
+        "authorUid": { "type": "string", "minLength": 1, "maxLength": 128, "description": "Creator UID" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": ["referenceNumber", "category", "place", "status", "adminRemark", "date", "authorUid", "createdAt"]
+    },
+    "Scheme": {
+      "title": "Scheme",
+      "description": "Welfare scheme information for citizens",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 200, "description": "Scheme name in English" },
+        "titleMl": { "type": "string", "maxLength": 300, "description": "Scheme name in Malayalam" },
+        "category": { "type": "string", "enum": ["Pension", "Housing", "Ration", "Health", "Education", "Agriculture", "Other"], "description": "Scheme category" },
+        "eligibility": { "type": "string", "minLength": 1, "maxLength": 1500, "description": "Eligibility criteria in English" },
+        "eligibilityMl": { "type": "string", "maxLength": 2000, "description": "Eligibility criteria in Malayalam" },
+        "documentsNeeded": { "type": "string", "minLength": 1, "maxLength": 1500, "description": "Required documents in English" },
+        "documentsNeededMl": { "type": "string", "maxLength": 2000, "description": "Required documents in Malayalam" },
+        "howToApply": { "type": "string", "minLength": 1, "maxLength": 1500, "description": "Application procedure in English" },
+        "howToApplyMl": { "type": "string", "maxLength": 2000, "description": "Application procedure in Malayalam" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation server timestamp" }
+      },
+      "required": ["title", "titleMl", "category", "eligibility", "eligibilityMl", "documentsNeeded", "documentsNeededMl", "howToApply", "howToApplyMl", "createdAt"]
+    },
+    "DirectoryEntry": {
+      "title": "DirectoryEntry",
+      "description": "Local utility, service, or institution in Ward 19 Melparamba",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 150, "description": "Name in English" },
+        "nameMl": { "type": "string", "maxLength": 200, "description": "Name in Malayalam" },
+        "category": { "type": "string", "enum": ["Shops", "Doctors", "Electricians", "Plumbers", "Autos", "Anganwadi", "Schools", "Ration Shop"], "description": "Directory category" },
+        "phone": { "type": "string", "minLength": 3, "maxLength": 25, "description": "Phone number" },
+        "place": { "type": "string", "minLength": 1, "maxLength": 150, "description": "Location in English" },
+        "placeMl": { "type": "string", "maxLength": 200, "description": "Location in Malayalam" },
+        "timings": { "type": "string", "maxLength": 150, "description": "Operating hours" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation server timestamp" }
+      },
+      "required": ["name", "nameMl", "category", "phone", "place", "placeMl", "timings", "createdAt"]
+    },
+    "AdminAccount": {
+      "title": "AdminAccount",
+      "description": "Authorized administrator account record",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "minLength": 3, "maxLength": 150, "description": "Admin email address" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 120, "description": "Admin display name" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation server timestamp" }
+      },
+      "required": ["email", "name", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/ward_info/{docId}": {
+      "schema": "WardInfo",
+      "description": "Stores Ward 19 Member profile, phone, and office hours"
+    },
+    "/notices/{noticeId}": {
+      "schema": "Notice",
+      "description": "Public announcements and notices for Ward 19"
+    },
+    "/contacts/{contactId}": {
+      "schema": "Contact",
+      "description": "Emergency and civic contact directory"
+    },
+    "/complaints/{referenceId}": {
+      "schema": "Complaint",
+      "description": "Private citizen complaints containing PII (name, phone, photo)"
+    },
+    "/complaint_status/{referenceId}": {
+      "schema": "ComplaintPublicStatus",
+      "description": "Public PII-free status and resolved issues lookup keyed by referenceNumber"
+    },
+    "/schemes/{schemeId}": {
+      "schema": "Scheme",
+      "description": "Welfare schemes with eligibility and required documents"
+    },
+    "/directory/{entryId}": {
+      "schema": "DirectoryEntry",
+      "description": "Local shops, doctors, autos, anganwadis, schools, and plumbers"
+    },
+    "/admins/{adminUid}": {
+      "schema": "AdminAccount",
+      "description": "Allowlisted admin accounts permitted to manage ward content"
+    }
+  }
+}

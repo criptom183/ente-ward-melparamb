@@ -1,0 +1,6 @@
+{
+  "name": "Ente Ward 19 - Melparamba Citizen Portal",
+  "description": "Bilingual (English & Malayalam) citizen information, grievance redressal, welfare schemes, and local directory app for Ward 19 Melparamba, Chemnad Panchayat, Kasaragod.",
+  "requestFramePermissions": ["camera", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
