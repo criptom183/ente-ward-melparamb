@@ -55,7 +55,7 @@ export const ContactsScreen: React.FC<ContactsScreenProps> = ({
       }
     }}
   />
-  <User className="w-8 h-8 text-white stroke-[2] absolute pointer-events-none opacity-20" />
+  
 </div>
           <div className="min-w-0">
             <h2 className="text-xl font-bold text-[#141E18] break-words">
