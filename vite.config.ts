@@ -12,6 +12,7 @@ export default defineConfig(({ command }) => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
+        injectRegister: 'auto',
         includeAssets: [
           'favicon.ico',
           'apple-touch-icon.png',
@@ -22,7 +23,7 @@ export default defineConfig(({ command }) => {
           'assets/ward-member.jpg',
         ],
         manifest: {
-          id: './',
+          id: 'ente-ward-19-melparamb',
           name: 'എന്റെ വാർഡ് 19 - മേൽപ്പറമ്പ',
           short_name: 'വാർഡ് 19',
           description:
@@ -55,7 +56,7 @@ export default defineConfig(({ command }) => {
           ],
         },
         workbox: {
-          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, // 6 MiB to accommodate dev/unminified bundles
+          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,jpg}'],
         },
         devOptions: {

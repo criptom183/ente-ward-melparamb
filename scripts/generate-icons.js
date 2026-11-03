@@ -32,8 +32,8 @@ function makeChunk(type, data) {
 }
 
 function generatePng(width, height, isMaskable = false) {
-  // Signature
-  const sig = Buffer.from([137, 80, 78, 72, 13, 10, 26, 10]);
+  // Signature (89 50 4E 47 0D 0A 1A 0A)
+  const sig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
   // IHDR
   const ihdr = Buffer.alloc(13);
