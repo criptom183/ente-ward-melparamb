@@ -58,6 +58,7 @@ export interface WardInfo {
   officeHoursMl: string;
   officeAddress?: string;
   officeAddressMl?: string;
+  photoUrl?: string;
   updatedAt?: unknown;
 }
 

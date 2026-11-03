@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#1B6C47" />
+      <stop offset="65%" stop-color="#0E5135" />
+      <stop offset="100%" stop-color="#073321" />
+    </radialGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5DE98" />
+      <stop offset="50%" stop-color="#D6A13C" />
+      <stop offset="100%" stop-color="#9C6B17" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Base Circle -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+
+  <!-- Outer Concentric Rings -->
+  <circle cx="256" cy="256" r="216" fill="none" stroke="url(#goldGrad)" stroke-width="8" opacity="0.9" />
+  <circle cx="256" cy="256" r="196" fill="none" stroke="#FAF8F2" stroke-width="2" stroke-dasharray="6 6" opacity="0.4" />
+
+  <!-- Inner Center Shield / Circle -->
+  <circle cx="256" cy="256" r="160" fill="#0C452D" stroke="url(#goldGrad)" stroke-width="4" filter="url(#shadow)" />
+
+  <!-- Number 19 -->
+  <text x="256" y="275" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="140" font-weight="900" fill="#FAF8F2" text-anchor="middle" letter-spacing="-4">
+    19
+  </text>
+
+  <!-- Ward Malayalam Subtext -->
+  <text x="256" y="340" font-family="'Noto Sans Malayalam', sans-serif" font-size="34" font-weight="700" fill="url(#goldGrad)" text-anchor="middle">
+    മേൽപ്പറമ്പ
+  </text>
+
+  <!-- Panchayath Top Subtext -->
+  <text x="256" y="150" font-family="'Noto Sans Malayalam', sans-serif" font-size="24" font-weight="600" fill="#A7D7BC" text-anchor="middle" letter-spacing="1">
+    ചെമ്മനാട് ഗ്രാമപഞ്ചായത്ത്
+  </text>
+</svg>

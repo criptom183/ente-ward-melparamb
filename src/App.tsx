@@ -23,6 +23,7 @@ import { SchemesScreen } from './components/SchemesScreen';
 import { DirectoryScreen } from './components/DirectoryScreen';
 import { AboutAndRulesScreen } from './components/AboutAndRulesScreen';
 import { AdminDashboardScreen } from './components/AdminDashboardScreen';
+import { PWAInstallButton } from './components/PWAInstallButton';
 
 export default function App() {
   const vm = useWardViewModel();
@@ -74,6 +75,9 @@ export default function App() {
               </h1>
             </header>
 
+            {/* Install / Save to Phone Button */}
+            <PWAInstallButton />
+
             {/* Dark Green Ward Member Hero Card */}
             <section
               aria-label="വാർഡ് മെമ്പർ"
@@ -91,20 +95,23 @@ export default function App() {
 
               <div className="flex items-center gap-4 relative z-10 min-w-0">
                 <div className="w-16 h-16 rounded-full border-2 border-[#D6A13C] bg-[#24664A] flex items-center justify-center shrink-0 overflow-hidden relative">
-  <img
-    src="https://api.ksmart.lsgkerala.gov.in/meeting-management-services/auth/pdf/fetch-member-photo/f024cdf5-0c4f-4c26-ae63-632ae934aa24.jpg/10132101192"
-    alt={wardInfo.memberNameMl || wardInfo.memberName}
-    className="w-full h-full object-cover"
-    onError={(e) => {
-      const imgEl = e.currentTarget;
-      if (!imgEl.src.includes('ward-member.jpg')) {
-        imgEl.src = `${import.meta.env.BASE_URL}assets/ward-member.jpg`;
-      } else {
-        imgEl.style.display = 'none';
-      }
-    }}
-  />
-  </div>
+                  <img
+                    src={
+                      wardInfo.photoUrl ||
+                      'https://api.ksmart.lsgkerala.gov.in/meeting-management-services/auth/pdf/fetch-member-photo/f024cdf5-0c4f-4c26-ae63-632ae934aa24.jpg/10132101192'
+                    }
+                    alt={wardInfo.memberNameMl || wardInfo.memberName}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const imgEl = e.currentTarget;
+                      if (!imgEl.src.includes('ward-member.jpg')) {
+                        imgEl.src = `${import.meta.env.BASE_URL}assets/ward-member.jpg`;
+                      } else {
+                        imgEl.style.display = 'none';
+                      }
+                    }}
+                  />
+                </div>
                 <div className="min-w-0">
                   <h2 className="text-xl font-bold text-white leading-snug break-words">
                     {wardInfo.memberNameMl || wardInfo.memberName}

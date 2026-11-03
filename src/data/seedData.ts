@@ -49,6 +49,9 @@ export const NOTICE_SVG_GRAMA_SABHA = `data:image/svg+xml;utf8,${encodeURICompon
 </svg>
 `)}`;
 
+export const WARD_MEMBER_OFFICIAL_PHOTO =
+  'https://api.ksmart.lsgkerala.gov.in/meeting-management-services/auth/pdf/fetch-member-photo/f024cdf5-0c4f-4c26-ae63-632ae934aa24.jpg/10132101192';
+
 export const INITIAL_WARD_INFO: Omit<WardInfo, 'id' | 'updatedAt'> = {
   wardNumber: 19,
   wardName: '19, മേൽപറമ്പ്',
@@ -61,6 +64,7 @@ export const INITIAL_WARD_INFO: Omit<WardInfo, 'id' | 'updatedAt'> = {
   memberRoleMl: 'ഗ്രാമപഞ്ചായത്ത് പ്രസിഡന്റ് · വാർഡ് മെമ്പർ',
   phone: '8921701788',
   whatsapp: '8921701788',
+  photoUrl: WARD_MEMBER_OFFICIAL_PHOTO,
   officeHours: 'തിങ്കൾ – ശനി: രാവിലെ 10:00 – വൈകിട്ട് 5:00',
   officeHoursMl: 'തിങ്കൾ – ശനി: രാവിലെ 10:00 – വൈകിട്ട് 5:00',
   officeAddress:

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, MapPin, Clock, Phone, Building2 } from 'lucide-react';
 import { Language, WardInfo } from '../types/ward';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface AboutAndRulesScreenProps {
   lang: Language;
@@ -102,6 +103,10 @@ export const AboutAndRulesScreen: React.FC<AboutAndRulesScreenProps> = ({
               </div>
             </div>
           </div>
+        </div>
+
+        <div className="pt-2">
+          <PWAInstallButton />
         </div>
 
         <div className="pt-4 border-t border-[#E6E2D6] text-center">
