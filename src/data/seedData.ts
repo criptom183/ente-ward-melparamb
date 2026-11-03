@@ -6,6 +6,13 @@ import {
   DirectoryEntry,
   Complaint,
   ComplaintPublicStatus,
+  FormItem,
+  EventItem,
+  GramSabhaMeeting,
+  WasteScheduleItem,
+  WasteInfo,
+  DevelopmentWork,
+  BloodDonor,
 } from '../types/ward';
 
 /**
@@ -380,3 +387,23 @@ export const INITIAL_DIRECTORY: (Omit<DirectoryEntry, 'createdAt'>)[] = [
 export const INITIAL_RESOLVED_PUBLIC_STATUS: (Omit<ComplaintPublicStatus, 'createdAt'>)[] = [];
 
 export const INITIAL_COMPLAINTS_SEED: (Omit<Complaint, 'createdAt'>)[] = [];
+
+export const INITIAL_FORMS: (Omit<FormItem, 'createdAt'>)[] = [];
+
+export const INITIAL_EVENTS: (Omit<EventItem, 'createdAt'>)[] = [];
+
+export const INITIAL_GRAM_SABHAS: (Omit<GramSabhaMeeting, 'createdAt'>)[] = [];
+
+export const INITIAL_WASTE_SCHEDULE: (Omit<WasteScheduleItem, 'createdAt'>)[] = [];
+
+export const INITIAL_WASTE_INFO: Omit<WasteInfo, 'id' | 'updatedAt'> = {
+  contactName: 'ഹരിത കർമ്മ സേന (ചെമ്മനാട് ഗ്രാമപഞ്ചായത്ത്)',
+  phone: '9446700800',
+  whatsapp: '9446700800',
+};
+
+export const INITIAL_WORKS: (Omit<DevelopmentWork, 'createdAt'>)[] = [];
+
+export const INITIAL_DONORS: (Omit<BloodDonor, 'createdAt'>)[] = [];
+
+

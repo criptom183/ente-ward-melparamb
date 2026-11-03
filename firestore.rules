@@ -6,12 +6,12 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // Global Primitives
+    // Global Primitives & Helpers
     function isValidId(id) {
-      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+      return id is string && id.size() >= 1 && id.size() <= 128;
     }
     function isSeedId(id) {
-      return id is string && id.size() >= 6 && id.size() <= 64 && id.matches('^seed_[a-zA-Z0-9_\\-]+$');
+      return id is string && id.size() >= 4 && id.size() <= 64 && id.matches('^seed_[a-zA-Z0-9_\\-]+$');
     }
     function isValidRefId(id) {
       return id is string && id.size() >= 5 && id.size() <= 40 && id.matches('^W19-[0-9]{4}-[0-9]{4}$');
@@ -32,230 +32,122 @@ service cloud.firestore {
       );
     }
 
-    // Validation Helpers
-    function isValidWardInfo(data) {
-      return data.keys().hasAll(['wardNumber', 'wardName', 'wardNameMl', 'panchayat', 'panchayatMl', 'memberName', 'memberNameMl', 'phone', 'officeHours', 'officeHoursMl', 'updatedAt']) &&
-        data.keys().hasOnly(['wardNumber', 'wardName', 'wardNameMl', 'panchayat', 'panchayatMl', 'memberName', 'memberNameMl', 'memberRole', 'memberRoleMl', 'phone', 'whatsapp', 'officeHours', 'officeHoursMl', 'officeAddress', 'officeAddressMl', 'updatedAt']) &&
-        data.wardNumber is number &&
-        data.wardName is string && data.wardName.size() >= 1 && data.wardName.size() <= 150 &&
-        data.wardNameMl is string && data.wardNameMl.size() <= 200 &&
-        data.panchayat is string && data.panchayat.size() >= 1 && data.panchayat.size() <= 150 &&
-        data.panchayatMl is string && data.panchayatMl.size() <= 200 &&
-        data.memberName is string && data.memberName.size() >= 1 && data.memberName.size() <= 150 &&
-        data.memberNameMl is string && data.memberNameMl.size() <= 200 &&
-        (!('memberRole' in data) || (data.memberRole is string && data.memberRole.size() <= 150)) &&
-        (!('memberRoleMl' in data) || (data.memberRoleMl is string && data.memberRoleMl.size() <= 200)) &&
-        data.phone is string && data.phone.size() >= 10 && data.phone.size() <= 20 &&
-        (!('whatsapp' in data) || (data.whatsapp is string && data.whatsapp.size() <= 20)) &&
-        data.officeHours is string && data.officeHours.size() <= 200 &&
-        data.officeHoursMl is string && data.officeHoursMl.size() <= 250 &&
-        (!('officeAddress' in data) || (data.officeAddress is string && data.officeAddress.size() <= 300)) &&
-        (!('officeAddressMl' in data) || (data.officeAddressMl is string && data.officeAddressMl.size() <= 350)) &&
-        data.updatedAt is timestamp;
-    }
-
-    function isValidNotice(data) {
-      return data.keys().hasAll(['title', 'titleMl', 'date', 'category', 'description', 'descriptionMl', 'sendPush', 'createdAt']) &&
-        data.keys().hasOnly(['title', 'titleMl', 'date', 'category', 'description', 'descriptionMl', 'imageUrl', 'sendPush', 'createdAt']) &&
-        data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
-        data.titleMl is string && data.titleMl.size() <= 300 &&
-        data.date is string && data.date.size() >= 1 && data.date.size() <= 40 &&
-        data.category is string && data.category in ['Meeting', 'Camp', 'Water/Power', 'General'] &&
-        data.description is string && data.description.size() >= 1 && data.description.size() <= 2000 &&
-        data.descriptionMl is string && data.descriptionMl.size() <= 3000 &&
-        (!('imageUrl' in data) || (data.imageUrl is string && data.imageUrl.size() <= 500000)) &&
-        data.sendPush is bool &&
-        data.createdAt is timestamp;
-    }
-
-    function isValidContact(data) {
-      return data.keys().hasAll(['name', 'nameMl', 'role', 'roleMl', 'phone', 'category', 'officeHours', 'priority', 'createdAt']) &&
-        data.keys().hasOnly(['name', 'nameMl', 'role', 'roleMl', 'phone', 'category', 'officeHours', 'priority', 'createdAt']) &&
-        data.name is string && data.name.size() >= 1 && data.name.size() <= 150 &&
-        data.nameMl is string && data.nameMl.size() <= 200 &&
-        data.role is string && data.role.size() <= 150 &&
-        data.roleMl is string && data.roleMl.size() <= 200 &&
-        data.phone is string && data.phone.size() >= 3 && data.phone.size() <= 25 &&
-        data.category is string && data.category in ['Ward Member', 'Panchayat', 'Hospital', 'Police', 'Fire', 'Electricity', 'Water', 'Ambulance'] &&
-        data.officeHours is string && data.officeHours.size() <= 150 &&
-        data.priority is number &&
-        data.createdAt is timestamp;
-    }
-
-    function isValidComplaint(data) {
-      return data.keys().hasAll(['referenceNumber', 'name', 'phone', 'category', 'place', 'description', 'status', 'adminRemark', 'authorUid', 'date', 'createdAt']) &&
-        data.keys().hasOnly(['referenceNumber', 'name', 'phone', 'category', 'place', 'description', 'photoUrl', 'latitude', 'longitude', 'status', 'adminRemark', 'authorUid', 'date', 'createdAt']) &&
-        data.referenceNumber is string && data.referenceNumber.size() >= 5 && data.referenceNumber.size() <= 40 && data.referenceNumber.matches('^W19-[0-9]{4}-[0-9]{4}$') &&
-        data.name is string && data.name.size() >= 1 && data.name.size() <= 120 &&
-        data.phone is string && data.phone.size() == 10 && data.phone.matches('^[0-9]{10}$') &&
-        data.category is string && data.category in ['Streetlight', 'Road', 'Waste', 'Drainage', 'Water', 'Other'] &&
-        data.place is string && data.place.size() >= 1 && data.place.size() <= 150 &&
-        data.description is string && data.description.size() >= 1 && data.description.size() <= 1500 &&
-        (!('photoUrl' in data) || (data.photoUrl is string && data.photoUrl.size() <= 600000)) &&
-        (!('latitude' in data) || data.latitude is number) &&
-        (!('longitude' in data) || data.longitude is number) &&
-        data.status is string && data.status in ['Received', 'In Progress', 'Resolved'] &&
-        data.adminRemark is string && data.adminRemark.size() <= 1000 &&
-        data.authorUid is string && data.authorUid.size() >= 1 && data.authorUid.size() <= 128 &&
-        data.date is string && data.date.size() >= 1 && data.date.size() <= 40 &&
-        data.createdAt is timestamp;
-    }
-
-    function isValidComplaintPublicStatus(data) {
-      return data.keys().hasAll(['referenceNumber', 'category', 'place', 'status', 'adminRemark', 'date', 'authorUid', 'createdAt']) &&
-        data.keys().hasOnly(['referenceNumber', 'category', 'place', 'status', 'adminRemark', 'date', 'authorUid', 'createdAt']) &&
-        data.referenceNumber is string && data.referenceNumber.size() >= 5 && data.referenceNumber.size() <= 40 && data.referenceNumber.matches('^W19-[0-9]{4}-[0-9]{4}$') &&
-        data.category is string && data.category in ['Streetlight', 'Road', 'Waste', 'Drainage', 'Water', 'Other'] &&
-        data.place is string && data.place.size() >= 1 && data.place.size() <= 150 &&
-        data.status is string && data.status in ['Received', 'In Progress', 'Resolved'] &&
-        data.adminRemark is string && data.adminRemark.size() <= 1000 &&
-        data.date is string && data.date.size() >= 1 && data.date.size() <= 40 &&
-        data.authorUid is string && data.authorUid.size() >= 1 && data.authorUid.size() <= 128 &&
-        data.createdAt is timestamp;
-    }
-
-    function isValidScheme(data) {
-      return data.keys().hasAll(['title', 'titleMl', 'category', 'eligibility', 'eligibilityMl', 'documentsNeeded', 'documentsNeededMl', 'howToApply', 'howToApplyMl', 'createdAt']) &&
-        data.keys().hasOnly(['title', 'titleMl', 'category', 'eligibility', 'eligibilityMl', 'documentsNeeded', 'documentsNeededMl', 'howToApply', 'howToApplyMl', 'createdAt']) &&
-        data.title is string && data.title.size() >= 1 && data.title.size() <= 200 &&
-        data.titleMl is string && data.titleMl.size() <= 300 &&
-        data.category is string && data.category in ['Pension', 'Housing', 'Ration', 'Health', 'Education', 'Agriculture', 'Other'] &&
-        data.eligibility is string && data.eligibility.size() >= 1 && data.eligibility.size() <= 1500 &&
-        data.eligibilityMl is string && data.eligibilityMl.size() <= 2000 &&
-        data.documentsNeeded is string && data.documentsNeeded.size() >= 1 && data.documentsNeeded.size() <= 1500 &&
-        data.documentsNeededMl is string && data.documentsNeededMl.size() <= 2000 &&
-        data.howToApply is string && data.howToApply.size() >= 1 && data.howToApply.size() <= 1500 &&
-        data.howToApplyMl is string && data.howToApplyMl.size() <= 2000 &&
-        data.createdAt is timestamp;
-    }
-
-    function isValidDirectoryEntry(data) {
-      return data.keys().hasAll(['name', 'nameMl', 'category', 'phone', 'place', 'placeMl', 'timings', 'createdAt']) &&
-        data.keys().hasOnly(['name', 'nameMl', 'category', 'phone', 'place', 'placeMl', 'timings', 'createdAt']) &&
-        data.name is string && data.name.size() >= 1 && data.name.size() <= 150 &&
-        data.nameMl is string && data.nameMl.size() <= 200 &&
-        data.category is string && data.category in ['Shops', 'Doctors', 'Electricians', 'Plumbers', 'Autos', 'Anganwadi', 'Schools', 'Ration Shop'] &&
-        data.phone is string && data.phone.size() >= 3 && data.phone.size() <= 25 &&
-        data.place is string && data.place.size() >= 1 && data.place.size() <= 150 &&
-        data.placeMl is string && data.placeMl.size() <= 200 &&
-        data.timings is string && data.timings.size() <= 150 &&
-        data.createdAt is timestamp;
-    }
-
-    function isValidAdminAccount(data) {
-      return data.keys().hasAll(['email', 'name', 'createdAt']) &&
-        data.keys().hasOnly(['email', 'name', 'createdAt']) &&
-        data.email is string && data.email.size() >= 3 && data.email.size() <= 150 &&
-        data.name is string && data.name.size() >= 1 && data.name.size() <= 120 &&
-        data.createdAt is timestamp;
-    }
-
-    // 1. Ward Info (Public Read, Initial Seed or Admin Write)
+    // 1. Ward Info (Public Read, Seed or Admin Write)
     match /ward_info/{docId} {
-      allow get: if isValidId(docId);
-      allow list: if resource.data.wardNumber == 19;
-      allow create: if isValidId(docId) && isValidWardInfo(incoming()) && incoming().updatedAt == request.time && (
-        isAdmin() || (isSeedId(docId) && !exists(/databases/$(database)/documents/ward_info/$(docId)))
-      );
-      allow update: if isSignedIn() && isValidId(docId) && isValidWardInfo(incoming()) && incoming().updatedAt == request.time && isAdmin();
-      allow delete: if isSignedIn() && isValidId(docId) && isAdmin();
+      allow get, list: if true;
+      allow create: if isValidId(docId) && (isAdmin() || isSeedId(docId));
+      allow update, delete: if isValidId(docId) && isAdmin();
     }
 
-    // 2. Notices (Public Read, Initial Seed or Admin Write)
+    // 2. Notices (Public Read, Seed or Admin Write)
     match /notices/{noticeId} {
-      allow get: if isValidId(noticeId);
-      allow list: if resource.data.category in ['Meeting', 'Camp', 'Water/Power', 'General'];
-      allow create: if isValidId(noticeId) && isValidNotice(incoming()) && incoming().createdAt == request.time && (
-        isAdmin() || (isSeedId(noticeId) && !exists(/databases/$(database)/documents/notices/$(noticeId)))
-      );
-      allow update: if isSignedIn() && isValidId(noticeId) && isValidNotice(incoming()) && incoming().createdAt == existing().createdAt && isAdmin();
-      allow delete: if isSignedIn() && isValidId(noticeId) && isAdmin();
+      allow get, list: if true;
+      allow create: if isValidId(noticeId) && (isAdmin() || isSeedId(noticeId));
+      allow update, delete: if isValidId(noticeId) && isAdmin();
     }
 
-    // 3. Contacts (Public Read, Initial Seed or Admin Write)
+    // 3. Contacts (Public Read, Seed or Admin Write)
     match /contacts/{contactId} {
-      allow get: if isValidId(contactId);
-      allow list: if resource.data.category in ['Ward Member', 'Panchayat', 'Hospital', 'Police', 'Fire', 'Electricity', 'Water', 'Ambulance'];
-      allow create: if isValidId(contactId) && isValidContact(incoming()) && incoming().createdAt == request.time && (
-        isAdmin() || (isSeedId(contactId) && !exists(/databases/$(database)/documents/contacts/$(contactId)))
-      );
-      allow update: if isSignedIn() && isValidId(contactId) && isValidContact(incoming()) && incoming().createdAt == existing().createdAt && isAdmin();
-      allow delete: if isSignedIn() && isValidId(contactId) && isAdmin();
+      allow get, list: if true;
+      allow create: if isValidId(contactId) && (isAdmin() || isSeedId(contactId));
+      allow update, delete: if isValidId(contactId) && isAdmin();
     }
 
     // 4. Private Complaints with PII (Resident Create, Owner/Admin Read, Admin Update/Delete)
     match /complaints/{referenceId} {
-      allow get: if isSignedIn() && isValidRefId(referenceId) && (existing().authorUid == request.auth.uid || isAdmin());
-      allow list: if isSignedIn() && (resource.data.authorUid == request.auth.uid || isAdmin());
+      allow get, list: if isSignedIn() && (resource.data.authorUid == request.auth.uid || isAdmin());
       allow create: if isValidRefId(referenceId) &&
-        isValidComplaint(incoming()) &&
         incoming().referenceNumber == referenceId &&
-        ((isSignedIn() && incoming().authorUid == request.auth.uid) || (!isSignedIn() && incoming().authorUid.matches('^anon_[a-zA-Z0-9_\\-]{6,64}$'))) &&
-        (incoming().status == 'Received' || isAdmin()) &&
-        incoming().createdAt == request.time &&
-        !exists(/databases/$(database)/documents/complaints/$(referenceId)) &&
-        existsAfter(/databases/$(database)/documents/complaint_status/$(referenceId));
-      allow update: if isSignedIn() &&
-        isValidRefId(referenceId) &&
-        isValidComplaint(incoming()) &&
-        incoming().referenceNumber == existing().referenceNumber &&
-        incoming().authorUid == existing().authorUid &&
-        incoming().createdAt == existing().createdAt &&
-        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'adminRemark']) &&
-        isAdmin();
-      allow delete: if isSignedIn() && isValidRefId(referenceId) && isAdmin();
+        incoming().description is string && incoming().description.size() <= 1500;
+      allow update, delete: if isValidRefId(referenceId) && isAdmin();
     }
 
     // 5. Public Complaint Status & Resolved Issues (PII-Free, Public Read, Atomic Create, Admin Update/Delete)
     match /complaint_status/{referenceId} {
-      allow get: if isValidRefId(referenceId);
-      allow list: if resource.data.status in ['Received', 'In Progress', 'Resolved'];
-      allow create: if isValidRefId(referenceId) &&
-        isValidComplaintPublicStatus(incoming()) &&
-        incoming().referenceNumber == referenceId &&
-        ((isSignedIn() && incoming().authorUid == request.auth.uid) || (!isSignedIn() && incoming().authorUid.matches('^anon_[a-zA-Z0-9_\\-]{6,64}$'))) &&
-        incoming().createdAt == request.time &&
-        !exists(/databases/$(database)/documents/complaint_status/$(referenceId));
-      allow update: if isSignedIn() &&
-        isValidRefId(referenceId) &&
-        isValidComplaintPublicStatus(incoming()) &&
-        incoming().referenceNumber == existing().referenceNumber &&
-        incoming().authorUid == existing().authorUid &&
-        incoming().createdAt == existing().createdAt &&
-        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'adminRemark', 'date']) &&
-        isAdmin();
-      allow delete: if isSignedIn() && isValidRefId(referenceId) && isAdmin();
+      allow get, list: if true;
+      allow create: if isValidRefId(referenceId);
+      allow update, delete: if isValidRefId(referenceId) && isAdmin();
     }
 
-    // 6. Welfare Schemes (Public Read, Initial Seed or Admin Write)
+    // 6. Schemes (Public Read, Seed or Admin Write)
     match /schemes/{schemeId} {
-      allow get: if isValidId(schemeId);
-      allow list: if resource.data.category in ['Pension', 'Housing', 'Ration', 'Health', 'Education', 'Agriculture', 'Other'];
-      allow create: if isValidId(schemeId) && isValidScheme(incoming()) && incoming().createdAt == request.time && (
-        isAdmin() || (isSeedId(schemeId) && !exists(/databases/$(database)/documents/schemes/$(schemeId)))
-      );
-      allow update: if isSignedIn() && isValidId(schemeId) && isValidScheme(incoming()) && incoming().createdAt == existing().createdAt && isAdmin();
-      allow delete: if isSignedIn() && isValidId(schemeId) && isAdmin();
+      allow get, list: if true;
+      allow create: if isValidId(schemeId) && (isAdmin() || isSeedId(schemeId));
+      allow update, delete: if isValidId(schemeId) && isAdmin();
     }
 
-    // 7. Local Directory (Public Read, Initial Seed or Admin Write)
+    // 7. Forms (Public Read, Seed or Admin Write)
+    match /forms/{formId} {
+      allow get, list: if true;
+      allow create: if isValidId(formId) && (isAdmin() || isSeedId(formId));
+      allow update, delete: if isValidId(formId) && isAdmin();
+    }
+
+    // 8. Events Calendar (Public Read, Seed or Admin Write)
+    match /events/{eventId} {
+      allow get, list: if true;
+      allow create: if isValidId(eventId) && (isAdmin() || isSeedId(eventId));
+      allow update, delete: if isValidId(eventId) && isAdmin();
+    }
+
+    // 9. Gram Sabhas (Public Read, Seed or Admin Write)
+    match /gramSabhas/{meetingId} {
+      allow get, list: if true;
+      allow create: if isValidId(meetingId) && (isAdmin() || isSeedId(meetingId));
+      allow update, delete: if isValidId(meetingId) && isAdmin();
+    }
+
+    // 10. Gram Sabha Points (Resident Create, Admin Read/Manage)
+    match /gramSabhaPoints/{pointId} {
+      allow get, list: if isAdmin();
+      allow create: if isValidId(pointId) &&
+        incoming().subject is string &&
+        incoming().subject.size() >= 1 &&
+        incoming().subject.size() <= 500;
+      allow update, delete: if isValidId(pointId) && isAdmin();
+    }
+
+    // 11. Waste Schedule (Public Read, Seed or Admin Write)
+    match /wasteSchedule/{scheduleId} {
+      allow get, list: if true;
+      allow create: if isValidId(scheduleId) && (isAdmin() || isSeedId(scheduleId));
+      allow update, delete: if isValidId(scheduleId) && isAdmin();
+    }
+
+    // 12. Waste Info (Public Read, Seed or Admin Write)
+    match /wasteInfo/{docId} {
+      allow get, list: if true;
+      allow create, update, delete: if isValidId(docId) && (isAdmin() || isSeedId(docId));
+    }
+
+    // 13. Development Works (Public Read, Seed or Admin Write)
+    match /works/{workId} {
+      allow get, list: if true;
+      allow create: if isValidId(workId) && (isAdmin() || isSeedId(workId));
+      allow update, delete: if isValidId(workId) && isAdmin();
+    }
+
+    // 14. Blood Donors (Approved Donors Public Read, Resident Register with consent, Admin Manage)
+    match /donors/{donorId} {
+      allow get, list: if resource.data.approved == true || isAdmin();
+      allow create: if isValidId(donorId) &&
+        incoming().consentGiven == true &&
+        (incoming().approved == false || isAdmin() || isSeedId(donorId));
+      allow update, delete: if isValidId(donorId) && isAdmin();
+    }
+
+    // 15. Directory (Public Read, Seed or Admin Write)
     match /directory/{entryId} {
-      allow get: if isValidId(entryId);
-      allow list: if resource.data.category in ['Shops', 'Doctors', 'Electricians', 'Plumbers', 'Autos', 'Anganwadi', 'Schools', 'Ration Shop'];
-      allow create: if isValidId(entryId) && isValidDirectoryEntry(incoming()) && incoming().createdAt == request.time && (
-        isAdmin() || (isSeedId(entryId) && !exists(/databases/$(database)/documents/directory/$(entryId)))
-      );
-      allow update: if isSignedIn() && isValidId(entryId) && isValidDirectoryEntry(incoming()) && incoming().createdAt == existing().createdAt && isAdmin();
-      allow delete: if isSignedIn() && isValidId(entryId) && isAdmin();
+      allow get, list: if true;
+      allow create: if isValidId(entryId) && (isAdmin() || isSeedId(entryId));
+      allow update, delete: if isValidId(entryId) && isAdmin();
     }
 
-    // 8. Admins Collection (Authenticated Self/Admin Read, Admin Write)
+    // 16. Admins (Authenticated Self or Admin Read, Admin Write)
     match /admins/{adminUid} {
-      allow get: if isSignedIn() && isValidId(adminUid) && (request.auth.uid == adminUid || isAdmin());
+      allow get: if isSignedIn() && (request.auth.uid == adminUid || isAdmin());
       allow list: if isSignedIn() && isAdmin();
-      allow create: if isSignedIn() && isValidId(adminUid) && isValidAdminAccount(incoming()) && incoming().createdAt == request.time && isAdmin();
-      allow update: if isSignedIn() && isValidId(adminUid) && isValidAdminAccount(incoming()) && incoming().createdAt == existing().createdAt && isAdmin();
-      allow delete: if isSignedIn() && isValidId(adminUid) && isAdmin();
+      allow create, update, delete: if isSignedIn() && isAdmin();
     }
   }
 }

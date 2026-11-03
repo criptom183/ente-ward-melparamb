@@ -11,8 +11,11 @@ import {
   BookOpen,
   AlertTriangle,
   ChevronRight,
-  User,
   WifiOff,
+  Calendar,
+  Briefcase,
+  Trash2,
+  Heart,
 } from 'lucide-react';
 import { useWardViewModel } from './viewmodels/useWardViewModel';
 import { AppScreen } from './types/ward';
@@ -24,6 +27,10 @@ import { DirectoryScreen } from './components/DirectoryScreen';
 import { AboutAndRulesScreen } from './components/AboutAndRulesScreen';
 import { AdminDashboardScreen } from './components/AdminDashboardScreen';
 import { PWAInstallButton } from './components/PWAInstallButton';
+import { EventsScreen } from './components/EventsScreen';
+import { WasteScreen } from './components/WasteScreen';
+import { DevelopmentWorksScreen } from './components/DevelopmentWorksScreen';
+import { BloodDonorsScreen } from './components/BloodDonorsScreen';
 
 export default function App() {
   const vm = useWardViewModel();
@@ -35,6 +42,14 @@ export default function App() {
     notices,
     contacts,
     schemes,
+    forms,
+    events,
+    gramSabhas,
+    gramSabhaPoints,
+    wasteSchedule,
+    wasteInfo,
+    works,
+    donors,
     directory,
     publicStatuses,
   } = vm;
@@ -53,7 +68,7 @@ export default function App() {
 
       {/* Push Notification Broadcast Toast */}
       {vm.pushBanner && (
-        <div className="bg-[#0E5135] text-white px-4 py-3 text-center text-sm font-bold flex items-center justify-center gap-2">
+        <div className="bg-[#0E5135] text-white px-4 py-3 text-center text-sm font-bold flex items-center justify-center gap-2 sticky top-0 z-50 shadow-md">
           <Bell className="w-4 h-4 shrink-0" />
           <span className="break-words">{vm.pushBanner}</span>
         </div>
@@ -164,69 +179,125 @@ export default function App() {
               </button>
             )}
 
-            {/* 2x2 Service Cards Grid */}
+            {/* 8 TILES IN 2 COLUMNS (Compact Height to fit comfortably) */}
             <section
               aria-label="സേവനങ്ങൾ"
-              className="grid grid-cols-2 gap-3.5 pt-0.5"
+              className="grid grid-cols-2 gap-3 pt-0.5"
             >
-              {/* 1. Notices */}
+              {/* 1. അറിയിപ്പുകൾ */}
               <button
                 type="button"
                 onClick={() => setCurrentScreen('notices')}
-                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-5 border border-[#E6E2D6] flex flex-col justify-between min-h-[156px] text-left transition-all cursor-pointer shadow-2xs"
+                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-4 sm:p-4.5 border border-[#E6E2D6] flex flex-col justify-between min-h-[114px] text-left transition-all cursor-pointer shadow-2xs"
               >
-                <div className="w-12 h-12 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center shrink-0">
-                  <Bell className="w-6 h-6" />
+                <div className="w-10 h-10 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center shrink-0">
+                  <Bell className="w-5 h-5" />
                 </div>
-                <div className="text-lg sm:text-xl font-bold text-[#141E18] leading-snug break-words mt-6">
+                <div className="text-base sm:text-lg font-bold text-[#141E18] leading-tight break-words mt-3">
                   അറിയിപ്പുകൾ
                 </div>
               </button>
 
-              {/* 2. Contacts */}
+              {/* 2. പരിപാടികൾ (New) */}
+              <button
+                type="button"
+                onClick={() => setCurrentScreen('events')}
+                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-4 sm:p-4.5 border border-[#E6E2D6] flex flex-col justify-between min-h-[114px] text-left transition-all cursor-pointer shadow-2xs"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center shrink-0">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <div className="text-base sm:text-lg font-bold text-[#141E18] leading-tight break-words mt-3">
+                  പരിപാടികൾ
+                </div>
+              </button>
+
+              {/* 3. ഫോൺ നമ്പറുകൾ */}
               <button
                 type="button"
                 onClick={() => setCurrentScreen('contacts')}
-                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-5 border border-[#E6E2D6] flex flex-col justify-between min-h-[156px] text-left transition-all cursor-pointer shadow-2xs"
+                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-4 sm:p-4.5 border border-[#E6E2D6] flex flex-col justify-between min-h-[114px] text-left transition-all cursor-pointer shadow-2xs"
               >
-                <div className="w-12 h-12 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center shrink-0">
-                  <Phone className="w-6 h-6" />
+                <div className="w-10 h-10 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center shrink-0">
+                  <Phone className="w-5 h-5" />
                 </div>
-                <div className="text-lg sm:text-xl font-bold text-[#141E18] leading-snug break-words mt-6">
+                <div className="text-base sm:text-lg font-bold text-[#141E18] leading-tight break-words mt-3">
                   ഫോൺ നമ്പറുകൾ
                 </div>
               </button>
 
-              {/* 3. Schemes */}
+              {/* 4. പദ്ധതികൾ */}
               <button
                 type="button"
                 onClick={() => setCurrentScreen('schemes')}
-                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-5 border border-[#E6E2D6] flex flex-col justify-between min-h-[156px] text-left transition-all cursor-pointer shadow-2xs"
+                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-4 sm:p-4.5 border border-[#E6E2D6] flex flex-col justify-between min-h-[114px] text-left transition-all cursor-pointer shadow-2xs"
               >
-                <div className="w-12 h-12 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center shrink-0">
-                  <FileText className="w-6 h-6" />
+                <div className="w-10 h-10 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center shrink-0">
+                  <FileText className="w-5 h-5" />
                 </div>
-                <div className="text-lg sm:text-xl font-bold text-[#141E18] leading-snug break-words mt-6">
+                <div className="text-base sm:text-lg font-bold text-[#141E18] leading-tight break-words mt-3">
                   പദ്ധതികൾ
                 </div>
               </button>
 
-              {/* 4. Local Directory */}
+              {/* 5. വികസന പ്രവർത്തനങ്ങൾ (New) */}
+              <button
+                type="button"
+                onClick={() => setCurrentScreen('works')}
+                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-4 sm:p-4.5 border border-[#E6E2D6] flex flex-col justify-between min-h-[114px] text-left transition-all cursor-pointer shadow-2xs"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center shrink-0">
+                  <Briefcase className="w-5 h-5" />
+                </div>
+                <div className="text-base sm:text-lg font-bold text-[#141E18] leading-tight break-words mt-3">
+                  വികസന പ്രവർത്തനങ്ങൾ
+                </div>
+              </button>
+
+              {/* 6. മാലിന്യ ശേഖരണം (New) */}
+              <button
+                type="button"
+                onClick={() => setCurrentScreen('waste')}
+                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-4 sm:p-4.5 border border-[#E6E2D6] flex flex-col justify-between min-h-[114px] text-left transition-all cursor-pointer shadow-2xs"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center shrink-0">
+                  <Trash2 className="w-5 h-5" />
+                </div>
+                <div className="text-base sm:text-lg font-bold text-[#141E18] leading-tight break-words mt-3">
+                  മാലിന്യ ശേഖരണം
+                </div>
+              </button>
+
+              {/* 7. രക്തദാതാക്കൾ (New) */}
+              <button
+                type="button"
+                onClick={() => setCurrentScreen('donors')}
+                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-4 sm:p-4.5 border border-[#E6E2D6] flex flex-col justify-between min-h-[114px] text-left transition-all cursor-pointer shadow-2xs"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#FCEBEB] text-rose-700 flex items-center justify-center shrink-0">
+                  <Heart className="w-5 h-5 fill-current" />
+                </div>
+                <div className="text-base sm:text-lg font-bold text-[#141E18] leading-tight break-words mt-3">
+                  രക്തദാതാക്കൾ
+                </div>
+              </button>
+
+              {/* 8. പ്രാദേശിക ഡയറക്ടറി */}
               <button
                 type="button"
                 onClick={() => setCurrentScreen('directory')}
-                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-5 border border-[#E6E2D6] flex flex-col justify-between min-h-[156px] text-left transition-all cursor-pointer shadow-2xs"
+                className="bg-white hover:bg-[#F3F0E6] active:scale-[0.99] rounded-3xl p-4 sm:p-4.5 border border-[#E6E2D6] flex flex-col justify-between min-h-[114px] text-left transition-all cursor-pointer shadow-2xs"
               >
-                <div className="w-12 h-12 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center shrink-0">
-                  <BookOpen className="w-6 h-6" />
+                <div className="w-10 h-10 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center shrink-0">
+                  <BookOpen className="w-5 h-5" />
                 </div>
-                <div className="text-lg sm:text-xl font-bold text-[#141E18] leading-snug break-words mt-6">
+                <div className="text-base sm:text-lg font-bold text-[#141E18] leading-tight break-words mt-3">
                   പ്രാദേശിക ഡയറക്ടറി
                 </div>
               </button>
             </section>
 
-            {/* 5. Full-Width Warm Gold Button: Report a Problem ("പരാതി അറിയിക്കുക") */}
+            {/* Full-Width Warm Gold Button: Report a Problem ("പരാതി അറിയിക്കുക") */}
             <div className="pt-1">
               <button
                 type="button"
@@ -265,7 +336,7 @@ export default function App() {
           </div>
         )}
 
-        {/* INNER SCREENS */}
+        {/* SCREEN 2: അറിപ്പുകൾ */}
         {currentScreen === 'notices' && (
           <NoticesScreen
             lang={lang}
@@ -275,6 +346,7 @@ export default function App() {
           />
         )}
 
+        {/* SCREEN 3: ഫോൺ നമ്പറുകൾ */}
         {currentScreen === 'contacts' && (
           <ContactsScreen
             lang={lang}
@@ -284,6 +356,66 @@ export default function App() {
           />
         )}
 
+        {/* SCREEN 4: പദ്ധതികൾ & ഫോമുകൾ */}
+        {currentScreen === 'schemes' && (
+          <SchemesScreen
+            lang={lang}
+            schemes={schemes}
+            forms={forms}
+            onBack={() => setCurrentScreen('home')}
+          />
+        )}
+
+        {/* SCREEN 5: പരിപാടികൾ & ഗ്രാമസഭ */}
+        {currentScreen === 'events' && (
+          <EventsScreen
+            lang={lang}
+            events={events}
+            gramSabhas={gramSabhas}
+            submitGramSabhaPoint={vm.submitGramSabhaPoint}
+            onBack={() => setCurrentScreen('home')}
+          />
+        )}
+
+        {/* SCREEN 6: മാലിന്യ ശേഖരണം */}
+        {currentScreen === 'waste' && (
+          <WasteScreen
+            lang={lang}
+            schedule={wasteSchedule}
+            wasteInfo={wasteInfo}
+            onBack={() => setCurrentScreen('home')}
+          />
+        )}
+
+        {/* SCREEN 7: വികസന പ്രവർത്തനങ്ങൾ */}
+        {currentScreen === 'works' && (
+          <DevelopmentWorksScreen
+            lang={lang}
+            works={works}
+            onBack={() => setCurrentScreen('home')}
+          />
+        )}
+
+        {/* SCREEN 8: രക്തദാതാക്കൾ */}
+        {currentScreen === 'donors' && (
+          <BloodDonorsScreen
+            lang={lang}
+            donors={donors}
+            submitDonorRegistration={vm.submitDonorRegistration}
+            onBack={() => setCurrentScreen('home')}
+          />
+        )}
+
+        {/* SCREEN 9: പ്രാദേശിക ഡയറക്ടറി */}
+        {currentScreen === 'directory' && (
+          <DirectoryScreen
+            lang={lang}
+            directory={directory}
+            onBack={() => setCurrentScreen('home')}
+          />
+        )}
+
+        {/* SCREEN 10: പരാതി അറിയിക്കുക / സ്ഥിതി അറിയാം */}
         {(currentScreen === 'report' || currentScreen === 'status') && (
           <ReportProblemScreen
             lang={lang}
@@ -297,22 +429,7 @@ export default function App() {
           />
         )}
 
-        {currentScreen === 'schemes' && (
-          <SchemesScreen
-            lang={lang}
-            schemes={schemes}
-            onBack={() => setCurrentScreen('home')}
-          />
-        )}
-
-        {currentScreen === 'directory' && (
-          <DirectoryScreen
-            lang={lang}
-            directory={directory}
-            onBack={() => setCurrentScreen('home')}
-          />
-        )}
-
+        {/* SCREEN 11: ആപ്പിനെക്കുറിച്ച് */}
         {currentScreen === 'about' && (
           <AboutAndRulesScreen
             lang={lang}
@@ -322,6 +439,7 @@ export default function App() {
           />
         )}
 
+        {/* SCREEN 12: അഡ്മിൻ പാനൽ */}
         {currentScreen === 'admin' && (
           <AdminDashboardScreen
             lang={lang}
@@ -334,6 +452,14 @@ export default function App() {
             directory={directory}
             adminComplaints={vm.adminComplaints}
             publicStatuses={publicStatuses}
+            forms={forms}
+            events={events}
+            gramSabhas={gramSabhas}
+            gramSabhaPoints={gramSabhaPoints}
+            wasteSchedule={wasteSchedule}
+            wasteInfo={wasteInfo}
+            works={works}
+            donors={donors}
             signInAdminWithEmail={vm.signInAdminWithEmail}
             registerAdminWithEmail={vm.registerAdminWithEmail}
             signInAdminWithGoogle={vm.signInAdminWithGoogle}
@@ -344,6 +470,22 @@ export default function App() {
             deleteContact={vm.deleteContact}
             saveScheme={vm.saveScheme}
             deleteScheme={vm.deleteScheme}
+            saveForm={vm.saveForm}
+            deleteForm={vm.deleteForm}
+            saveEvent={vm.saveEvent}
+            deleteEvent={vm.deleteEvent}
+            saveGramSabha={vm.saveGramSabha}
+            deleteGramSabha={vm.deleteGramSabha}
+            deleteGramSabhaPoint={vm.deleteGramSabhaPoint}
+            saveWasteSchedule={vm.saveWasteSchedule}
+            deleteWasteSchedule={vm.deleteWasteSchedule}
+            saveWasteInfo={vm.saveWasteInfo}
+            broadcastWasteReminder={vm.broadcastWasteReminder}
+            saveWork={vm.saveWork}
+            deleteWork={vm.deleteWork}
+            approveDonor={vm.approveDonor}
+            toggleDonorAvailability={vm.toggleDonorAvailability}
+            deleteDonor={vm.deleteDonor}
             saveDirectoryEntry={vm.saveDirectoryEntry}
             deleteDirectoryEntry={vm.deleteDirectoryEntry}
             saveWardInfo={vm.saveWardInfo}
