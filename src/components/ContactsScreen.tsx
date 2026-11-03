@@ -41,17 +41,22 @@ export const ContactsScreen: React.FC<ContactsScreenProps> = ({
       {/* Ward Member Card */}
       <section className="bg-white rounded-3xl p-5 sm:p-6 border border-[#E6E2D6] shadow-2xs space-y-5">
         <div className="flex items-center gap-4 min-w-0">
-          <div className="w-16 h-16 rounded-full bg-[#E8F2EC] border-2 border-[#D6A13C] text-[#0E5135] flex items-center justify-center shrink-0 overflow-hidden relative">
-            <img
-              src="/assets/ward-member.jpg"
-              alt={wardInfo.memberNameMl || wardInfo.memberName}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = 'none';
-              }}
-            />
-            <User className="w-8 h-8 absolute pointer-events-none opacity-0" />
-          </div>
+          <div className="w-16 h-16 rounded-full border-2 border-[#D6A13C] bg-[#24664A] flex items-center justify-center shrink-0 overflow-hidden relative">
+  <img
+    src="https://api.ksmart.lsgkerala.gov.in/meeting-management-services/auth/pdf/fetch-member-photo/f024cdf5-0c4f-4c26-ae63-632ae934aa24.jpg/10132101192"
+    alt={wardInfo.memberNameMl || wardInfo.memberName}
+    className="w-full h-full object-cover"
+    onError={(e) => {
+      const imgEl = e.currentTarget;
+      if (!imgEl.src.includes('ward-member.jpg')) {
+        imgEl.src = `${import.meta.env.BASE_URL}assets/ward-member.jpg`;
+      } else {
+        imgEl.style.display = 'none';
+      }
+    }}
+  />
+  <User className="w-8 h-8 text-white stroke-[2] absolute pointer-events-none opacity-20" />
+</div>
           <div className="min-w-0">
             <h2 className="text-xl font-bold text-[#141E18] break-words">
               {wardInfo.memberNameMl || wardInfo.memberName}
