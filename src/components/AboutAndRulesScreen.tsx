@@ -47,13 +47,20 @@ export const AboutAndRulesScreen: React.FC<AboutAndRulesScreenProps> = ({
       </div>
 
       <section className="bg-white rounded-3xl p-5 sm:p-6 border border-[#E6E2D6] shadow-2xs space-y-5">
-        <div>
-          <h2 className="text-xl font-bold text-[#141E18] break-words">
-            വാർഡ് 19 — മേൽപ്പറമ്പ
-          </h2>
-          <p className="text-base text-[#4A554E] mt-1 break-words">
-            ചെമ്മനാട് ഗ്രാമപഞ്ചായത്ത്, കാസർഗോഡ് ജില്ല, കേരളം
-          </p>
+        <div className="flex items-center gap-3.5">
+          <img
+            src={`${import.meta.env.BASE_URL}app-icon.png`}
+            alt="വാർഡ് 19 ലോഗോ"
+            className="w-14 h-14 rounded-2xl object-contain border border-[#E6E2D6] bg-white p-1 shadow-2xs shrink-0"
+          />
+          <div>
+            <h2 className="text-xl font-bold text-[#141E18] break-words">
+              വാർഡ് 19 — മേൽപ്പറമ്പ
+            </h2>
+            <p className="text-sm text-[#4A554E] mt-0.5 break-words">
+              ചെമ്മനാട് ഗ്രാമപഞ്ചായത്ത്, കാസർഗോഡ്
+            </p>
+          </div>
         </div>
 
         <div className="space-y-3.5 pt-2 border-t border-[#E6E2D6]">

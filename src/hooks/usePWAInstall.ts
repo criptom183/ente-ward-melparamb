@@ -5,6 +5,8 @@ export interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
+const STORAGE_KEY = 'ward19_pwa_installed';
+
 // Module-level prompt capture to catch the event even before React mounts
 let globalDeferredPrompt: BeforeInstallPromptEvent | null = null;
 const promptListeners = new Set<
@@ -21,6 +23,11 @@ if (typeof window !== 'undefined') {
 
   window.addEventListener('appinstalled', () => {
     globalDeferredPrompt = null;
+    try {
+      localStorage.setItem(STORAGE_KEY, 'true');
+    } catch {
+      // ignore storage errors
+    }
     promptListeners.forEach((fn) => fn(null));
   });
 }
@@ -28,7 +35,14 @@ if (typeof window !== 'undefined') {
 export function usePWAInstall() {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(() => globalDeferredPrompt);
-  const [isInstalled, setIsInstalled] = useState(false);
+  const [isRunningStandalone, setIsRunningStandalone] = useState(false);
+  const [hasBeenInstalled, setHasBeenInstalled] = useState<boolean>(() => {
+    try {
+      return typeof window !== 'undefined' && localStorage.getItem(STORAGE_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
   const [isIOS, setIsIOS] = useState(false);
   const [isInIframe, setIsInIframe] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
@@ -42,13 +56,21 @@ export function usePWAInstall() {
       setIsInIframe(true);
     }
 
-    // Check standalone mode (already installed & launched from phone homescreen)
+    // Check standalone mode (already launched and running AS the app from phone homescreen)
     const checkStandalone = () => {
       const isStandalone =
         window.matchMedia('(display-mode: standalone)').matches ||
         (window.navigator as unknown as { standalone?: boolean }).standalone ===
           true;
-      setIsInstalled(isStandalone);
+      setIsRunningStandalone(isStandalone);
+      if (isStandalone) {
+        setHasBeenInstalled(true);
+        try {
+          localStorage.setItem(STORAGE_KEY, 'true');
+        } catch {
+          // ignore
+        }
+      }
     };
 
     checkStandalone();
@@ -107,7 +129,12 @@ export function usePWAInstall() {
         await promptToUse.prompt();
         const { outcome } = await promptToUse.userChoice;
         if (outcome === 'accepted') {
-          setIsInstalled(true);
+          setHasBeenInstalled(true);
+          try {
+            localStorage.setItem(STORAGE_KEY, 'true');
+          } catch {
+            // ignore
+          }
           setDeferredPrompt(null);
           globalDeferredPrompt = null;
           return { success: true, nativeTriggered: true, reason: 'installed' };
@@ -121,12 +148,23 @@ export function usePWAInstall() {
     return { success: false, nativeTriggered: false, reason: 'no-prompt' };
   };
 
+  const markNotInstalled = () => {
+    setHasBeenInstalled(false);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+  };
+
   return {
     isInstallable: !!(deferredPrompt || globalDeferredPrompt),
-    isInstalled,
+    isRunningStandalone,
+    hasBeenInstalled,
     isIOS,
     isInIframe,
     isChecking,
     install,
+    markNotInstalled,
   };
 }

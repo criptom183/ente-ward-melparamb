@@ -12,6 +12,9 @@ import {
   ExternalLink,
   Copy,
   QrCode,
+  HelpCircle,
+  Search,
+  Layers,
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { usePWAInstall } from '../hooks/usePWAInstall';
@@ -19,10 +22,19 @@ import { usePWAInstall } from '../hooks/usePWAInstall';
 const PRODUCTION_URL = 'https://criptom183.github.io/ente-ward-melparamb/';
 
 export const PWAInstallButton: React.FC = () => {
-  const { isInstallable, isInstalled, isIOS, isInIframe, isChecking, install } =
-    usePWAInstall();
+  const {
+    isInstallable,
+    isRunningStandalone,
+    hasBeenInstalled,
+    isIOS,
+    isInIframe,
+    isChecking,
+    install,
+    markNotInstalled,
+  } = usePWAInstall();
+
   const [showGuideModal, setShowGuideModal] = useState(false);
-  const [justInstalled, setJustInstalled] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
@@ -50,8 +62,8 @@ export const PWAInstallButton: React.FC = () => {
       .catch((err) => console.error('Failed to generate QR code', err));
   }, []);
 
-  // If already running inside standalone app mode on the phone, hide the banner
-  if (isInstalled && !justInstalled) {
+  // If already running launched FROM homescreen inside standalone app mode, hide install button
+  if (isRunningStandalone) {
     return null;
   }
 
@@ -100,8 +112,8 @@ export const PWAInstallButton: React.FC = () => {
     setLoading(false);
 
     if (success) {
-      setJustInstalled(true);
-      setTimeout(() => setJustInstalled(false), 6000);
+      // Installed successfully; prompt user on how to locate in App Drawer if needed
+      setShowHelpModal(true);
       return;
     }
 
@@ -122,6 +134,184 @@ export const PWAInstallButton: React.FC = () => {
       ? window.location.href
       : PRODUCTION_URL;
 
+  // CASE 1: App was added to phone, but resident is viewing inside Chrome browser
+  if (hasBeenInstalled) {
+    return (
+      <>
+        <div className="w-full bg-[#E8F2EC] rounded-2xl p-3.5 sm:p-4 border border-[#0E5135]/30 shadow-2xs text-[#141E18]">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-11 h-11 rounded-xl bg-white p-0.5 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden border border-[#0E5135]/20">
+                <img
+                  src={`${import.meta.env.BASE_URL}app-icon.png`}
+                  alt="വാർഡ് 19"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="min-w-0">
+                <div className="text-sm sm:text-base font-bold text-[#0E5135] truncate">
+                  ആപ്പ് ഫോണിൽ ചേർത്തു!
+                </div>
+                <div className="text-xs text-[#404D44] truncate">
+                  ഹോം സ്ക്രീനിൽ കാണുന്നില്ലേ?
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowHelpModal(true)}
+              className="shrink-0 px-3.5 py-2 rounded-xl bg-[#0E5135] hover:bg-[#0a3f29] active:scale-95 text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer"
+            >
+              <HelpCircle className="w-4 h-4 text-[#D6A13C]" />
+              <span>എവിടെ കാണാം?</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Modal explaining how to find the newly installed app on Android / iPhone */}
+        {showHelpModal && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in duration-200"
+            onClick={() => setShowHelpModal(false)}
+          >
+            <div
+              className="w-full max-w-sm rounded-3xl bg-[#FAF8F2] p-5 sm:p-6 shadow-2xl border border-[#E6E2D6] text-[#141E18] space-y-4 relative max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-white p-0.5 border border-[#E6E2D6] flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                    <img
+                      src={`${import.meta.env.BASE_URL}app-icon.png`}
+                      alt="വാർഡ് 19"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-bold text-[#141E18]">
+                    ആപ്പ് എവിടെ കണ്ടെത്താം?
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowHelpModal(false)}
+                  className="w-8 h-8 rounded-full bg-[#E8F2EC] text-[#0E5135] flex items-center justify-center hover:bg-[#d8e8de] transition-colors cursor-pointer"
+                  aria-label="ക്ലോസ് ചെയ്യുക"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {/* Reason explanation */}
+                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs sm:text-sm leading-relaxed">
+                  ആപ്പ് വിജയകരമായി ഫോണിൽ ചേർത്തിട്ടുണ്ട്. Android ഫോണുകളിൽ
+                  ഇവ കാണാൻ താഴെയുള്ള വഴികൾ നോക്കുക:
+                </div>
+
+                {/* Step 1: App Drawer */}
+                <div className="bg-white rounded-2xl p-4 border border-[#E6E2D6] space-y-2">
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-6 h-6 rounded-full bg-[#0E5135] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                      1
+                    </div>
+                    <div className="text-xs sm:text-sm font-bold text-[#141E18]">
+                      ആപ്പ് ലിസ്റ്റ് (App Drawer) തുറക്കുക
+                    </div>
+                  </div>
+                  <p className="text-xs text-[#404D44] pl-8 leading-relaxed">
+                    ഫോൺ ഹോം സ്ക്രീനിൽ നിന്ന് വിരൽ{' '}
+                    <strong className="text-[#0E5135]">
+                      താഴെ നിന്ന് മുകളിലേക്ക് സ്വൈപ്പ് (Swipe Up)
+                    </strong>{' '}
+                    ചെയ്യുക.
+                  </p>
+                  <p className="text-xs text-[#404D44] pl-8 leading-relaxed">
+                    അവിടെ സെർച്ച് ബാറിൽ{' '}
+                    <strong className="text-[#0E5135]">"വാർഡ് 19"</strong>{' '}
+                    അല്ലെങ്കിൽ <strong className="text-[#0E5135]">"Ward 19"</strong>{' '}
+                    എന്ന് ടൈപ്പ് ചെയ്താൽ ആപ്പ് കാണാം.
+                  </p>
+                  <div className="pl-8 pt-1 text-[11px] text-[#0E5135] font-semibold flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>
+                      ആപ്പ് ഐക്കണിൽ അമർത്തിപ്പിടിച്ച് (Long Press) 'Add to Home' നൽകാം!
+                    </span>
+                  </div>
+                </div>
+
+                {/* Step 2: Notification Bar / Background install */}
+                <div className="bg-white rounded-2xl p-4 border border-[#E6E2D6] space-y-2">
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-6 h-6 rounded-full bg-[#0E5135] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                      2
+                    </div>
+                    <div className="text-xs sm:text-sm font-bold text-[#141E18]">
+                      നോട്ടിഫിക്കേഷൻ ബാർ പരിശോധിക്കുക
+                    </div>
+                  </div>
+                  <p className="text-xs text-[#404D44] pl-8 leading-relaxed">
+                    ഫോണിന്റെ മുകളിൽ നിന്ന് വിരൽ താഴേക്ക് വലിക്കുക. ചില ഫോണുകളിൽ
+                    (Samsung, Redmi, Pixel) ആപ്പ് തയ്യാറാക്കാൻ ഏതാനും സെക്കൻഡുകൾ
+                    എടുത്തേക്കാം.
+                  </p>
+                </div>
+
+                {/* Step 3: Chrome Menu Open in app */}
+                <div className="bg-white rounded-2xl p-4 border border-[#E6E2D6] space-y-2">
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-6 h-6 rounded-full bg-[#0E5135] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                      3
+                    </div>
+                    <div className="text-xs sm:text-sm font-bold text-[#141E18]">
+                      Chrome മെനുവിലൂടെ നേരിട്ട് തുറക്കാം
+                    </div>
+                  </div>
+                  <p className="text-xs text-[#404D44] pl-8 leading-relaxed">
+                    Chrome-ന്റെ മുകളിൽ വലതുവശത്തുള്ള{' '}
+                    <span className="font-bold text-[#0E5135]">
+                      3 ഡോട്ടുകൾ (⋮)
+                    </span>{' '}
+                    അമർത്തിയാൽ{' '}
+                    <strong className="text-[#0E5135]">
+                      "Open in app" (ആപ്പിൽ തുറക്കുക)
+                    </strong>{' '}
+                    എന്ന ഓപ്ഷൻ കാണാം.
+                  </p>
+                </div>
+
+                {/* Re-install reset button if user wants to try again */}
+                <div className="pt-1 text-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      markNotInstalled();
+                      setShowHelpModal(false);
+                    }}
+                    className="text-xs text-[#637067] underline hover:text-[#141E18] cursor-pointer"
+                  >
+                    ഇൻസ്റ്റാൾ ബട്ടൺ വീണ്ടും കാണിക്കണോ? ഇവിടെ ക്ലിക്ക് ചെയ്യുക
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowHelpModal(false)}
+                className="w-full py-3 rounded-2xl bg-[#0E5135] text-white font-bold text-sm hover:bg-[#093a26] transition-colors cursor-pointer text-center"
+              >
+                ശരി, മനസ്സിലായി
+              </button>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // CASE 2: App is not yet installed
   return (
     <>
       {/* Prominent Save / Install Card on Home Screen */}
@@ -134,18 +324,16 @@ export const PWAInstallButton: React.FC = () => {
 
         <div className="flex items-center justify-between gap-3 relative z-10">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-[#D6A13C] text-[#0E5135] flex items-center justify-center shrink-0 shadow-xs">
-              {justInstalled ? (
-                <CheckCircle className="w-5 h-5 text-[#0E5135]" />
-              ) : (
-                <Smartphone className="w-5 h-5 text-[#0E5135]" />
-              )}
+            <div className="w-11 h-11 rounded-xl bg-white p-0.5 flex items-center justify-center shrink-0 shadow-xs overflow-hidden border border-[#D6A13C]/40">
+              <img
+                src={`${import.meta.env.BASE_URL}app-icon.png`}
+                alt="വാർഡ് 19"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div className="min-w-0">
               <div className="text-sm sm:text-base font-bold text-white truncate">
-                {justInstalled
-                  ? 'ആപ്പ് ഇൻസ്റ്റാൾ ചെയ്തു!'
-                  : 'ഫോണിൽ ഇൻസ്റ്റാൾ ചെയ്യാം'}
+                ഫോണിൽ ഇൻസ്റ്റാൾ ചെയ്യാം
               </div>
               <div className="text-xs text-emerald-100/90 truncate">
                 {isInIframe
@@ -165,18 +353,10 @@ export const PWAInstallButton: React.FC = () => {
           >
             {loading || isChecking ? (
               <Loader2 className="w-4 h-4 animate-spin" />
-            ) : justInstalled ? (
-              <CheckCircle className="w-4 h-4" />
             ) : (
               <Download className="w-4 h-4 stroke-[2.5]" />
             )}
-            <span>
-              {loading || isChecking
-                ? 'തയ്യാറാകുന്നു...'
-                : justInstalled
-                  ? 'വിജയിച്ചു'
-                  : 'ഇൻസ്റ്റാൾ'}
-            </span>
+            <span>{loading || isChecking ? 'തയ്യാറാകുന്നു...' : 'ഇൻസ്റ്റാൾ'}</span>
           </button>
         </div>
       </div>
@@ -196,8 +376,12 @@ export const PWAInstallButton: React.FC = () => {
             {/* Modal Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#0E5135] text-white flex items-center justify-center shrink-0">
-                  <Smartphone className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-lg bg-white p-0.5 border border-[#E6E2D6] flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                  <img
+                    src={`${import.meta.env.BASE_URL}app-icon.png`}
+                    alt="വാർഡ് 19"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-[#141E18]">
                   {modalReason === 'iframe'
@@ -220,7 +404,6 @@ export const PWAInstallButton: React.FC = () => {
             {/* IFRAME / PREVIEW MODE FLOW */}
             {modalReason === 'iframe' && (
               <div className="space-y-3.5">
-                {/* Clear explanation of why iframe blocks native OS prompt */}
                 <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm leading-relaxed space-y-1.5">
                   <div className="font-bold flex items-center gap-1.5 text-amber-950">
                     <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />

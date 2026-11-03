@@ -65,14 +65,21 @@ export default function App() {
         {currentScreen === 'home' && (
           <div className="space-y-4">
             {/* Ward Subtitle & Greeting */}
-            <header className="pt-1 pb-1">
-              <div className="text-sm sm:text-base font-medium text-[#637067] break-words">
-                വാർഡ് {wardInfo.wardNumber || 19} ·{' '}
-                {wardInfo.panchayatMl || 'ചെമ്മനാട് ഗ്രാമപഞ്ചായത്ത്'}
+            <header className="pt-1 pb-1 flex items-center justify-between gap-3">
+              <div>
+                <div className="text-sm sm:text-base font-medium text-[#637067] break-words">
+                  വാർഡ് {wardInfo.wardNumber || 19} ·{' '}
+                  {wardInfo.panchayatMl || 'ചെമ്മനാട് ഗ്രാമപഞ്ചായത്ത്'}
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#141E18] mt-1 tracking-tight">
+                  നമസ്കാരം
+                </h1>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#141E18] mt-1 tracking-tight">
-                നമസ്കാരം
-              </h1>
+              <img
+                src={`${import.meta.env.BASE_URL}app-icon.png`}
+                alt="വാർഡ് 19 ലോഗോ"
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-contain border border-[#E6E2D6] bg-white p-1 shadow-2xs shrink-0"
+              />
             </header>
 
             {/* Install / Save to Phone Button */}
